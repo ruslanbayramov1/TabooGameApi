@@ -1,6 +1,6 @@
 ﻿namespace TabooGameApi.DTOs.Languages;
 
-public class LanguageGetAllDto
+public class LanguageGetDto
 {
     public string Code { get; set; }
     public string Name { get; set; }

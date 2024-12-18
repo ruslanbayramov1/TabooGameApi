@@ -16,9 +16,17 @@ public class LanguagesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<LanguageGetAllDto>>> GetAll()
+    public async Task<ActionResult<List<LanguageGetDto>>> GetAll()
     {
         var data = await _langService.GetAllAsync();
+        return Ok(data);
+    }
+
+    [HttpGet]
+    [Route("{code}")]
+    public async Task<ActionResult<LanguageGetDto>> GetById(string code)
+    {
+        var data = await _langService.GetByIdAsync(code); 
         return Ok(data);
     }
 

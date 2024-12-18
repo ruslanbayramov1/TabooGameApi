@@ -17,10 +17,19 @@ public class LanguageService : ILanguageService
         _mapper = mapper;
     }
 
-    public async Task<List<LanguageGetAllDto>> GetAllAsync()
+    public async Task<List<LanguageGetDto>> GetAllAsync()
     {
         var entities = await _context.Languages.ToListAsync();
-        var data = _mapper.Map<List<LanguageGetAllDto>>(entities);
+        var data = _mapper.Map<List<LanguageGetDto>>(entities);
+        return data;
+    }
+
+    public async Task<LanguageGetDto> GetByIdAsync(string code)
+    { 
+        var entity = await _context.Languages.FirstOrDefaultAsync(x => x.Code == code);
+        if (entity == null) throw new Exception("No language with the code");
+
+        var data = _mapper.Map<LanguageGetDto>(entity);
         return data;
     }
 
@@ -34,7 +43,6 @@ public class LanguageService : ILanguageService
     public async Task DeleteAsync(string code)
     {
         var entity = await _context.Languages.FirstOrDefaultAsync(x => x.Code == code);
-
         if (entity == null) throw new Exception("No language with the code");
 
         _context.Languages.Remove(entity);
