@@ -15,5 +15,6 @@ public static class ServiceRegistration
         service.AddValidatorsFromAssemblyContaining(typeof(Program));
 
         service.AddScoped<ILanguageService, LanguageService>();
+        service.AddScoped<IWordService, WordService>();
     }
 }

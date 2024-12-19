@@ -8,8 +8,14 @@ public class LanguageProfile : Profile
 {
     public LanguageProfile()
     {
-        CreateMap<LanguageCreateDto, Language>().ForMember(l => l.Icon, d => d.MapFrom(t => t.IconUrl));
-        CreateMap<Language, LanguageGetDto>().ForMember(d => d.IconUrl, l => l.MapFrom(t => t.Icon)).ReverseMap();
-        CreateMap<LanguagePutDto, Language>().ForMember(l => l.Icon, d => d.MapFrom(t => t.IconUrl));
+        CreateMap<LanguageCreateDto, Language>()
+            .ForMember(l => l.Icon, opt => opt.MapFrom(d => d.IconUrl));
+
+        CreateMap<Language, LanguageGetDto>()
+            .ForMember(d => d.IconUrl, opt => opt.MapFrom(l => l.Icon))
+            .ReverseMap();
+
+        CreateMap<LanguagePutDto, Language>()
+            .ForMember(l => l.Icon, opt => opt.MapFrom(d => d.IconUrl));
     }
 }
