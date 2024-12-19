@@ -92,7 +92,29 @@ public class LanguagesController : ControllerBase
     [Route("{code}")]
     public async Task<IActionResult> Delete(string code)
     {
-        await _langService.DeleteAsync(code);
-        return NoContent();
+        try 
+        { 
+            await _langService.DeleteAsync(code);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 }
