@@ -1,5 +1,4 @@
-﻿using TabooGameApi.DTOs.Languages;
-using TabooGameApi.DTOs.Words;
+﻿using TabooGameApi.DTOs.Words;
 using TabooGameApi.Entities;
 
 namespace TabooGameApi.Services.Interfaces;

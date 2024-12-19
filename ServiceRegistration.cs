@@ -16,5 +16,6 @@ public static class ServiceRegistration
 
         service.AddScoped<ILanguageService, LanguageService>();
         service.AddScoped<IWordService, WordService>();
+        service.AddScoped<IBannedWordService, BannedWordService>();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using TabooGameApi.DTOs.Words;
 using TabooGameApi.Enums;
-using TabooGameApi.Validators.BannedWords;
+using TabooGameApi.Validators.BannedWordsForWords;
 
 namespace TabooGameApi.Validators.Words;
 
@@ -35,7 +35,7 @@ public class WordPutDtoValidator : AbstractValidator<WordPutDto>
             .Must(bannedWords => bannedWords.Count() >= min && bannedWords.Count() <= max)
             .WithMessage($"Banned words count can be {min}, {mid} or {max} word.")
             .ForEach(bannedWord =>
-                bannedWord.SetValidator(new BannedWordPutValidator())
+                bannedWord.SetValidator(new BannedWordForWordPutValidator())
             );
     }
 }

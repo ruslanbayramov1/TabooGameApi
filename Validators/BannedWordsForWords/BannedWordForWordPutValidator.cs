@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using TabooGameApi.DTOs.BannedWords;
+using TabooGameApi.DTOs.BannedWordsForWords;
 
-namespace TabooGameApi.Validators.BannedWords;
+namespace TabooGameApi.Validators.BannedWordsForWords;
 
-public class BannedWordPutValidator : AbstractValidator<BannedWordPutDto>
+public class BannedWordForWordPutValidator : AbstractValidator<BannedWordForWordPutDto>
 {
-    public BannedWordPutValidator()
+    public BannedWordForWordPutValidator()
     {
         RuleFor(x => x.Text)
             .NotNull()
