@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TabooGameApi.DTOs.Words;
+using TabooGameApi.Exceptions;
 using TabooGameApi.Services.Interfaces;
 
 namespace TabooGameApi.Controllers;
@@ -17,38 +18,148 @@ public class WordsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var data = await _wordService.GetAllAsync();
-        return Ok(data);
+        try
+        { 
+            var data = await _wordService.GetAllAsync();
+            return Ok(data);
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpGet]
     [Route("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var data = await _wordService.GetByIdAsync(id);
-        return Ok(data);
+        try
+        { 
+            var data = await _wordService.GetByIdAsync(id);
+            return Ok(data);
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(WordCreateDto dto)
-    { 
-        await _wordService.CreateAsync(dto);
-        return Created();
+    {
+        try
+        { 
+            await _wordService.CreateAsync(dto);
+            return Created();
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpPut]
     [Route("{id}")]
     public async Task<IActionResult> Put(int id, WordPutDto dto)
-    { 
-        await _wordService.PutAsync(id, dto);
-        return Created();
+    {
+        try
+        { 
+            await _wordService.PutAsync(id, dto);
+            return Created();
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpDelete]
     [Route("{id}")]
     public async Task<IActionResult> Delete(int id)
     { 
-        await _wordService.DeleteAsync(id);
-        return NoContent();
+        try
+        { 
+            await _wordService.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 }

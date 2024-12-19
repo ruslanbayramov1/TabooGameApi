@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TabooGameApi.DAL;
 using TabooGameApi.DTOs.Words;
 using TabooGameApi.Entities;
+using TabooGameApi.Exceptions.Words;
 using TabooGameApi.Services.Interfaces;
 
 namespace TabooGameApi.Services.Implements;
@@ -54,7 +55,7 @@ public class WordService : IWordService
     public async Task<Word> _getById(int id)
     {
         var entity = await _context.Words.Include(x => x.BannedWords).FirstOrDefaultAsync(x => x.Id == id);
-        if (entity == null) throw new Exception("");
+        if (entity == null) throw new WordNotFoundException($"The word with id {id} not found");
 
         return entity;
     }

@@ -18,8 +18,30 @@ public class LanguagesController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var data = await _langService.GetAllAsync();
-        return Ok(data);
+        try
+        { 
+            var data = await _langService.GetAllAsync();
+            return Ok(data);
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpGet]
@@ -54,8 +76,30 @@ public class LanguagesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(LanguageCreateDto dto)
     {
-        await _langService.CreateAsync(dto);
-        return Created();
+        try
+        { 
+            await _langService.CreateAsync(dto);
+            return Created();
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpPut]

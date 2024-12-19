@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TabooGameApi.DTOs.BannedWords;
-using TabooGameApi.DTOs.Words;
-using TabooGameApi.Services.Implements;
+using TabooGameApi.Exceptions;
 using TabooGameApi.Services.Interfaces;
 
 namespace TabooGameApi.Controllers;
@@ -19,38 +18,148 @@ public class BannedWordsController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var data = await _bannedWordService.GetAllAsync();
-        return Ok(data);
+        try
+        { 
+            var data = await _bannedWordService.GetAllAsync();
+            return Ok(data);
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpGet]
     [Route("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var data = await _bannedWordService.GetByIdAsync(id);
-        return Ok(data);
+        try
+        {
+            var data = await _bannedWordService.GetByIdAsync(id);
+            return Ok(data);
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpPost]
     public async Task<IActionResult> Post(BannedWordCreateDto dto)
     {
-        await _bannedWordService.CreateAsync(dto);
-        return Created();
+        try
+        { 
+            await _bannedWordService.CreateAsync(dto);
+            return Created();
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpPut]
     [Route("{id}")]
     public async Task<IActionResult> Put(int id, BannedWordPutDto dto)
     {
-        await _bannedWordService.PutAsync(id, dto);
-        return Created();
+        try
+        { 
+            await _bannedWordService.PutAsync(id, dto);
+            return Created();
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpDelete]
     [Route("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        await _bannedWordService.DeleteAsync(id);
-        return NoContent();
+        try
+        { 
+            await _bannedWordService.DeleteAsync(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 }

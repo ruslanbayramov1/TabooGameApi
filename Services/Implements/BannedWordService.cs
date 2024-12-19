@@ -4,6 +4,7 @@ using TabooGameApi.DAL;
 using TabooGameApi.DTOs.BannedWords;
 using TabooGameApi.Entities;
 using TabooGameApi.Enums;
+using TabooGameApi.Exceptions.BannedWords;
 using TabooGameApi.Services.Interfaces;
 
 namespace TabooGameApi.Services.Implements;
@@ -63,7 +64,7 @@ public class BannedWordService : IBannedWordService
     public async Task<BannedWord> _getById(int id)
     {
         var entity = await _context.BannedWords.FindAsync(id);
-        if (entity == null) throw new Exception();
+        if (entity == null) throw new BannedWordNotFoundException($"The language with id {id} not found");
 
         return entity;
     }
