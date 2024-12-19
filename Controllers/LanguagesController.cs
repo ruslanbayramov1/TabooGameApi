@@ -1,22 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TabooGameApi.DTOs.Languages;
-using TabooGameApi.Entities;
+using TabooGameApi.Exceptions;
 using TabooGameApi.Services.Interfaces;
 
 namespace TabooGameApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v1/[controller]")]
 public class LanguagesController : ControllerBase
 {
     private readonly ILanguageService _langService;
-    public LanguagesController(ILanguageService langService)
+    public LanguagesController(ILanguageService languageService)
     {
-        _langService = langService;
+        _langService = languageService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<LanguageGetDto>>> GetAll()
+    public async Task<IActionResult> GetAll()
     {
         var data = await _langService.GetAllAsync();
         return Ok(data);
@@ -24,14 +24,35 @@ public class LanguagesController : ControllerBase
 
     [HttpGet]
     [Route("{code}")]
-    public async Task<ActionResult<LanguageGetDto>> GetById(string code)
+    public async Task<IActionResult> GetByCode(string code)
     {
-        var data = await _langService.GetByIdAsync(code); 
-        return Ok(data);
+        try
+        {
+            var data = await _langService.GetByCodeAsync(code);
+            return Ok(data);
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new { 
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create(LanguageCreateDto dto)
+    public async Task<IActionResult> Post(LanguageCreateDto dto)
     {
         await _langService.CreateAsync(dto);
         return Created();
@@ -39,15 +60,37 @@ public class LanguagesController : ControllerBase
 
     [HttpPut]
     [Route("{code}")]
-    public async Task<ActionResult> Update(string code, LanguagePutDto dto)
-    { 
-        await _langService.PutAsync(code, dto);
-        return Created();
+    public async Task<IActionResult> Put(string code, LanguagePutDto dto)
+    {
+        try
+        {
+            await _langService.PutAsync(code, dto);
+            return Created();
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 
     [HttpDelete]
     [Route("{code}")]
-    public async Task<ActionResult> Delete(string code)
+    public async Task<IActionResult> Delete(string code)
     {
         await _langService.DeleteAsync(code);
         return NoContent();
