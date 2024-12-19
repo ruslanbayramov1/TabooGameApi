@@ -54,10 +54,7 @@ public class LanguageService : ILanguageService
         var entity = await _context.Languages.FirstOrDefaultAsync(x => x.Code == code);
         if (entity == null) throw new Exception("No language with the code");
 
-        var data = _mapper.Map<Language>(dto);
-        
-        entity.Name = data.Name;
-        entity.Icon = data.Icon;
+        _mapper.Map(dto, entity);
 
         await _context.SaveChangesAsync();
     }
