@@ -11,4 +11,5 @@ public interface IWordService
     Task DeleteAsync(int id);
     Task PutAsync(int id, WordPutDto dto);
     Task<Word> _getById(int id);
+    Task _isExists(string lang, string text);
 }

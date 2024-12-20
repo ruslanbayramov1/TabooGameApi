@@ -11,4 +11,5 @@ public interface IBannedWordService
     Task DeleteAsync(int id);
     Task PutAsync(int id, BannedWordPutDto dto);
     Task<BannedWord> _getById(int id);
+    Task _isExists(string text, int id);
 }

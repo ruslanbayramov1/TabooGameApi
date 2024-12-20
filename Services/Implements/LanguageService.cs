@@ -4,6 +4,7 @@ using TabooGameApi.DAL;
 using TabooGameApi.DTOs.Languages;
 using TabooGameApi.Entities;
 using TabooGameApi.Exceptions.Language;
+using TabooGameApi.Exceptions.Languages;
 using TabooGameApi.Services.Interfaces;
 
 namespace TabooGameApi.Services.Implements;
@@ -20,6 +21,11 @@ public class LanguageService : ILanguageService
 
     public async Task CreateAsync(LanguageCreateDto dto)
     {
+        if (await _context.Languages.FindAsync(dto.Code) != null)
+        {
+            throw new LanguageDuplicateKeyException($"The key name {dto.Code} already exists");
+        }
+
         var data = _mapper.Map<Language>(dto);
         await _context.Languages.AddAsync(data);
         await _context.SaveChangesAsync();

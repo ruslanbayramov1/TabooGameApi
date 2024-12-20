@@ -21,6 +21,8 @@ public class BannedWordService : IBannedWordService
 
     public async Task CreateAsync(BannedWordCreateDto dto)
     {
+        await _isExists(dto.Text, dto.WordId);
+
         var data = _mapper.Map<BannedWord>(dto);
         await _context.BannedWords.AddAsync(data);
         await _context.SaveChangesAsync();
@@ -29,11 +31,6 @@ public class BannedWordService : IBannedWordService
     public async Task DeleteAsync(int id)
     {
         var entity = await _getById(id);
-
-        if (await _context.BannedWords.CountAsync() == (int)GameLevels.Easy)
-        {
-            throw new Exception();
-        }
 
         _context.BannedWords.Remove(entity);
         await _context.SaveChangesAsync();
@@ -56,6 +53,8 @@ public class BannedWordService : IBannedWordService
 
     public async Task PutAsync(int id, BannedWordPutDto dto)
     {
+        await _isExists(dto.Text, dto.WordId);
+        
         var entity = await _getById(id);
         _mapper.Map(dto, entity);
         await _context.SaveChangesAsync();
@@ -67,5 +66,16 @@ public class BannedWordService : IBannedWordService
         if (entity == null) throw new BannedWordNotFoundException($"The language with id {id} not found");
 
         return entity;
+    }
+
+    public Task _isExists(string text, int wordId)
+    {
+        var res = _context.BannedWords.FirstOrDefault(x => x.WordId == wordId && x.Text == text);
+        if (res != null)
+        { 
+            throw new BannedWordDuplicateValueException($"The word with name {text} and word id {wordId} already exists");
+        }
+
+        return Task.CompletedTask;
     }
 }
