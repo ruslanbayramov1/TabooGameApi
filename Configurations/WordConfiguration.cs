@@ -20,5 +20,10 @@ public class WordConfiguration : IEntityTypeConfiguration<Word>
             .HasOne(x => x.Language)
             .WithMany(l => l.Words)
             .HasForeignKey(x => x.LanguageCode);
+
+        builder
+            .HasOne(x => x.Level)
+            .WithMany(l => l.Words)
+            .HasForeignKey(x => x.LevelId);
     }
 }

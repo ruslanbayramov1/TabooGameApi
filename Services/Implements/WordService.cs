@@ -3,9 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TabooGameApi.DAL;
 using TabooGameApi.DTOs.Words;
 using TabooGameApi.Entities;
-using TabooGameApi.Enums;
 using TabooGameApi.Exceptions.Commons;
-using TabooGameApi.Exceptions.Words;
 using TabooGameApi.Services.Interfaces;
 
 namespace TabooGameApi.Services.Implements;
@@ -19,12 +17,12 @@ public class WordService : IWordService
         _context = context;
         _mapper = mapper;
     }
+
     public async Task CreateAsync(WordCreateDto dto)
     {
         await _isExists(dto.Language, dto.Text);
 
-        dto.Text = dto.Text.Trim();
-        dto.Language = dto.Language.Trim();
+        await _isValid(dto.LevelId, dto.Language, dto.BannedWords.Count());
 
         var data = _mapper.Map<Word>(dto);
         await _context.Words.AddAsync(data);
@@ -47,7 +45,7 @@ public class WordService : IWordService
 
     public async Task<List<WordGetDto>> GetAllAsync()
     {
-        var entities = await _context.Words.Include(x => x.BannedWords).ToListAsync();
+        var entities = await _context.Words.Include(x => x.BannedWords).Include(x => x.Level).ToListAsync();
         var data = _mapper.Map<List<WordGetDto>>(entities);
         return data;
     }
@@ -61,13 +59,7 @@ public class WordService : IWordService
 
     public async Task PutAsync(int id, WordPutDto dto)
     {
-        int min = (int)GameLevels.Easy;
-        int mid = (int)GameLevels.Medium;
-        int max = (int)GameLevels.Hard;
-        if (dto.BannedWords.Count < min || dto.BannedWords.Count > max)
-        {
-            throw new BannedWordCountException($"The number of banned words can be only {min}, {mid} or {max}");
-        }
+        await _isValid(dto.LevelId, dto.Language, dto.BannedWords.Count());
 
         var entity = await _getById(id);
         _mapper.Map(dto, entity);
@@ -82,9 +74,28 @@ public class WordService : IWordService
         return entity;
     }
 
-    public async Task _isExists(string lang, string text)
+    private async Task _isExists(string lang, string text)
     {
-        var res = await _context.Words.FirstOrDefaultAsync(x => x.LanguageCode == lang && x.Text == text);
+        var res = await _context.Words.Include(x => x.Level).FirstOrDefaultAsync(x => x.LanguageCode == lang && x.Text == text);
         if (res != null) throw new DuplicateKeyException<Word>();
+    }
+
+    private async Task _isValid(int levelId, string lang, int banCount)
+    {
+        if (!(await _context.Levels.AnyAsync(x => x.Id == levelId)))
+        {
+            throw new NotFoundException<Level>();
+        }
+
+        if (!(await _context.Languages.AnyAsync(x => x.Code == lang)))
+        {
+            throw new NotFoundException<Language>();
+        }
+
+        var lev = await _context.Levels.FindAsync(levelId);
+        if (lev?.BannedWordCount != banCount)
+        {
+            throw new Exception($"For level {lev?.Name}, banned word count must be {lev?.BannedWordCount}");
+        }
     }
 }

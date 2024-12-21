@@ -6,5 +6,7 @@ public class Word : IBaseEntity
     public string Text { get; set; } = null!;
     public string LanguageCode { get; set; } = null!;
     public Language Language { get; set; }
+    public int LevelId { get; set; }
+    public Level Level { get; set; }
     public ICollection<BannedWord> BannedWords { get; set; }
 }
