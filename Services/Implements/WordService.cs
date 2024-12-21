@@ -4,6 +4,7 @@ using TabooGameApi.DAL;
 using TabooGameApi.DTOs.Words;
 using TabooGameApi.Entities;
 using TabooGameApi.Enums;
+using TabooGameApi.Exceptions.Commons;
 using TabooGameApi.Exceptions.Words;
 using TabooGameApi.Services.Interfaces;
 
@@ -30,6 +31,13 @@ public class WordService : IWordService
         await _context.SaveChangesAsync();
     }
 
+    public async Task CreateManyAsync(List<WordCreateDto> dtos)
+    {
+        var entities = _mapper.Map<List<Word>>(dtos);
+        await _context.Words.AddRangeAsync(entities);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task DeleteAsync(int id)
     {
         var entity = await _getById(id);
@@ -53,8 +61,6 @@ public class WordService : IWordService
 
     public async Task PutAsync(int id, WordPutDto dto)
     {
-        await _isExists(dto.Language, dto.Text);
-
         int min = (int)GameLevels.Easy;
         int mid = (int)GameLevels.Medium;
         int max = (int)GameLevels.Hard;
@@ -71,7 +77,7 @@ public class WordService : IWordService
     public async Task<Word> _getById(int id)
     {
         var entity = await _context.Words.Include(x => x.BannedWords).FirstOrDefaultAsync(x => x.Id == id);
-        if (entity == null) throw new WordNotFoundException($"The word with id {id} not found");
+        if (entity == null) throw new NotFoundException<Word>($"The word with id {id} not found");
 
         return entity;
     }
@@ -79,9 +85,6 @@ public class WordService : IWordService
     public async Task _isExists(string lang, string text)
     {
         var res = await _context.Words.FirstOrDefaultAsync(x => x.LanguageCode == lang && x.Text == text);
-        if (res != null)
-        {
-            throw new WordDuplicateValueException($"The word with name {res.Text} and code {res.LanguageCode} already exists");
-        }
+        if (res != null) throw new DuplicateKeyException<Word>();
     }
 }

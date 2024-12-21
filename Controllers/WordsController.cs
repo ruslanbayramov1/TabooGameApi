@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using TabooGameApi.DTOs.Words;
 using TabooGameApi.Exceptions;
 using TabooGameApi.Services.Interfaces;
@@ -90,6 +91,44 @@ public class WordsController : ControllerBase
                 {
                     StatusCode = ibe.StatusCode,
                     Message = ibe.ErrorMessage
+                });
+            }
+            else
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
+                });
+            }
+        }
+    }
+
+    [HttpPost]
+    [Route("PostMany")]
+    public async Task<IActionResult> PostMany(List<WordCreateDto> dto)
+    {
+        try
+        {
+            await _wordService.CreateManyAsync(dto);
+            return Created();
+        }
+        catch (Exception ex)
+        {
+            if (ex is IBaseException ibe)
+            {
+                return StatusCode(ibe.StatusCode, new
+                {
+                    StatusCode = ibe.StatusCode,
+                    Message = ibe.ErrorMessage
+                });
+            }
+            else if (ex is SqlException)
+            {
+                return BadRequest(new
+                {
+                    StatusCode = StatusCodes.Status400BadRequest,
+                    Message = ex.Message
                 });
             }
             else

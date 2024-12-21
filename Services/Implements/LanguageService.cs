@@ -3,8 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TabooGameApi.DAL;
 using TabooGameApi.DTOs.Languages;
 using TabooGameApi.Entities;
-using TabooGameApi.Exceptions.Language;
-using TabooGameApi.Exceptions.Languages;
+using TabooGameApi.Exceptions.Commons;
 using TabooGameApi.Services.Interfaces;
 
 namespace TabooGameApi.Services.Implements;
@@ -23,7 +22,7 @@ public class LanguageService : ILanguageService
     {
         if (await _context.Languages.FindAsync(dto.Code) != null)
         {
-            throw new LanguageDuplicateKeyException($"The key name {dto.Code} already exists");
+            throw new DuplicateKeyException<Language>();
         }
 
         var data = _mapper.Map<Language>(dto);
@@ -64,7 +63,7 @@ public class LanguageService : ILanguageService
     public async Task<Language> _getByCode(string code)
     {
         var entity = await _context.Languages.FindAsync(code);
-        if (entity == null) throw new LanguageNotFoundException($"The language with code {code} not found");
+        if (entity == null) throw new NotFoundException<Language>();
 
         return entity;
     }

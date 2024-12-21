@@ -3,8 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TabooGameApi.DAL;
 using TabooGameApi.DTOs.BannedWords;
 using TabooGameApi.Entities;
-using TabooGameApi.Enums;
-using TabooGameApi.Exceptions.BannedWords;
+using TabooGameApi.Exceptions.Commons;
 using TabooGameApi.Services.Interfaces;
 
 namespace TabooGameApi.Services.Implements;
@@ -63,7 +62,7 @@ public class BannedWordService : IBannedWordService
     public async Task<BannedWord> _getById(int id)
     {
         var entity = await _context.BannedWords.FindAsync(id);
-        if (entity == null) throw new BannedWordNotFoundException($"The language with id {id} not found");
+        if (entity == null) throw new NotFoundException<BannedWord>($"The language with id {id} not found");
 
         return entity;
     }
@@ -71,10 +70,7 @@ public class BannedWordService : IBannedWordService
     public Task _isExists(string text, int wordId)
     {
         var res = _context.BannedWords.FirstOrDefault(x => x.WordId == wordId && x.Text == text);
-        if (res != null)
-        { 
-            throw new BannedWordDuplicateValueException($"The word with name {text} and word id {wordId} already exists");
-        }
+        if (res != null) throw new DuplicateKeyException<BannedWord>();
 
         return Task.CompletedTask;
     }
