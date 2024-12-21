@@ -1,6 +1,6 @@
 ﻿namespace TabooGameApi.Entities;
 
-public class Word
+public class Word : IBaseEntity
 {
     public int Id { get; set; }
     public string Text { get; set; } = null!;

@@ -1,8 +1,6 @@
-﻿using TabooGameApi.Entities;
+﻿namespace TabooGameApi.Exceptions.Commons;
 
-namespace TabooGameApi.Exceptions.Commons;
-
-public class NotFoundException<T> : Exception, IBaseException where T : class, new()
+public class NotFoundException<TEntity> : Exception, IBaseException where TEntity : class, new()
 {
     public int StatusCode => StatusCodes.Status400BadRequest;
 
@@ -10,12 +8,7 @@ public class NotFoundException<T> : Exception, IBaseException where T : class, n
 
     public NotFoundException()
     {
-        if (typeof(T) == typeof(Language))
-            ErrorMessage = "No language with given code";
-        else if (typeof(T) == typeof(BannedWord))
-            ErrorMessage = "No banned word with given id";
-        else if (typeof(T) == typeof(Word))
-            ErrorMessage = "No word with given id";
+        ErrorMessage = $"No {typeof(TEntity).Name.ToLower()} with given id";
     }
 
     public NotFoundException(string message)

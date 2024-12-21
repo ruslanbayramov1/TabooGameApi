@@ -1,6 +1,6 @@
 ﻿namespace TabooGameApi.Entities;
 
-public class Language
+public class Language : IBaseEntity
 {
     public string Code { get; set; } = null!;
     public string Name { get; set; } = null!;

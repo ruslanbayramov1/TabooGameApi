@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TabooGameApi.DAL;
 
@@ -10,9 +11,11 @@ using TabooGameApi.DAL;
 namespace TabooGameApi.Migrations
 {
     [DbContext(typeof(TabooDbContext))]
-    partial class TabooDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241221152146_CreateLevelTable")]
+    partial class CreateLevelTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
