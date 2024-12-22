@@ -18,5 +18,7 @@ public static class ServiceRegistration
         service.AddScoped<IWordService, WordService>();
         service.AddScoped<IBannedWordService, BannedWordService>();
         service.AddScoped<ILevelService, LevelService>();
+        service.AddScoped<IGameService, GameService>();
+        service.AddScoped<IRedisService, RedisService>();
     }
 }

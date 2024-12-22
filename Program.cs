@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using TabooGameApi.DAL;
 
 namespace TabooGameApi
@@ -19,7 +20,10 @@ namespace TabooGameApi
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("Remote"));
             });
 
-            // custom extension
+            var redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"));
+            builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
+
+            // custom extension 
             builder.Services.AddServices();
 
             var app = builder.Build();

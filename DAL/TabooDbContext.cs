@@ -22,4 +22,5 @@ public class TabooDbContext : DbContext
     public DbSet<Word> Words { get; set; }
     public DbSet<BannedWord> BannedWords { get; set; }
     public DbSet<Level> Levels { get; set; }
+    public DbSet<Game> Games { get; set; }
 }
