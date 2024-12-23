@@ -9,5 +9,4 @@ public interface IGameService
     Task CreateAsync(GameCreateDto dto);
     Task PutAsync(string id, GamePutDto dto);
     Task DeleteAsync(string id);
-    Task StartAsync(string id);
 }

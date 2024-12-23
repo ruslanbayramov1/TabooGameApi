@@ -20,13 +20,13 @@ namespace TabooGameApi
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("Remote"));
             });
 
-            var redis = ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"));
-            builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
-
             // custom extension 
             builder.Services.AddServices();
 
             var app = builder.Build();
+
+            // global error handler 
+            app.UseTabooExceptionHandler();
 
             if (app.Environment.IsDevelopment())
             {

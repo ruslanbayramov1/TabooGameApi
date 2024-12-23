@@ -12,12 +12,10 @@ public class GameService : IGameService
 {
     private readonly IMapper _mapper;
     private readonly TabooDbContext _context;
-    private readonly IRedisService _redisService;
-    public GameService(IMapper mapper, TabooDbContext context, IRedisService redisService)
+    public GameService(IMapper mapper, TabooDbContext context)
     {
         _context = context;
         _mapper = mapper;
-        _redisService = redisService;
     }
 
     public async Task CreateAsync(GameCreateDto dto)
@@ -59,12 +57,6 @@ public class GameService : IGameService
         var entity = await _getById(id);
         _mapper.Map(dto, entity);
         await _context.SaveChangesAsync();
-    }
-
-    public async Task StartAsync(string id)
-    {
-        var entity = await _getById(id);
-        await _redisService.SetAllAsync(id, entity);
     }
 
     private async Task<Game> _getById(string id)
