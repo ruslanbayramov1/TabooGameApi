@@ -1,7 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Diagnostics;
+using TabooGameApi.Enums;
 using TabooGameApi.Exceptions;
+using TabooGameApi.ExternalServices.Abstracts;
+using TabooGameApi.ExternalServices.Concretes;
 using TabooGameApi.Services.Implements;
 using TabooGameApi.Services.Interfaces;
 
@@ -21,6 +24,33 @@ public static class ServiceRegistration
         service.AddScoped<IBannedWordService, BannedWordService>();
         service.AddScoped<ILevelService, LevelService>();
         service.AddScoped<IGameService, GameService>();
+
+        return service;
+    }
+
+    public static IServiceCollection AddCacheServices(this IServiceCollection service, IConfiguration _conf, CacheTypes type = CacheTypes.Redis)
+    {
+        if (type == CacheTypes.Redis)
+        {
+            var redisConnectionString = _conf.GetConnectionString("Redis");
+            if (string.IsNullOrEmpty(redisConnectionString))
+            {
+                throw new InvalidOperationException("Redis connection string is not configured.");
+            }
+
+            service.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+                options.InstanceName = "Tabu_";
+            });
+
+            service.AddScoped<ICacheService, RedisService>();
+        }
+        else
+        {
+            service.AddMemoryCache();
+            service.AddScoped<ICacheService, LocalCacheService>();
+        }
 
         return service;
     }
@@ -55,6 +85,6 @@ public static class ServiceRegistration
             });
         });
 
-        return app; 
+        return app;
     }
 }

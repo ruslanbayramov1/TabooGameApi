@@ -9,6 +9,7 @@ namespace TabooGameApi.Controllers;
 public class GamesController : ControllerBase
 {
     private readonly IGameService _service;
+
     public GamesController(IGameService service)
     {
         _service = service;
@@ -32,15 +33,43 @@ public class GamesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(GameCreateDto dto)
     {
-        await _service.CreateAsync(dto);
-        return Created();
+        var id = await _service.CreateAsync(dto);
+        return StatusCode(StatusCodes.Status201Created, new
+        {
+            Id = id,
+        });
     }
 
-    [HttpGet]
-    [Route("/start/{id}")]
+    [HttpPost]
+    [Route("/[action]/{id}")]
     public async Task<IActionResult> Start(string id)
     {
-        return Ok();
+        var words = await _service.StartAsync(id);
+        return Ok(words);
+    }
+
+    [HttpPost]
+    [Route("/[action]/{id}")]
+    public async Task<IActionResult> Skip(string id)
+    {
+        var data = await _service.SkipAsync(id);
+        return Ok(data);
+    }
+
+    [HttpPost]
+    [Route("/[action]/{id}")]
+    public async Task<IActionResult> Success(string id)
+    {
+        var data = await _service.SuccessAsync(id);
+        return Ok(data);
+    }
+
+    [HttpPost]
+    [Route("/[action]/{id}")]
+    public async Task<IActionResult> Fail(string id)
+    {
+        var data = await _service.FailAsync(id);
+        return Ok(data);
     }
 
     [HttpPut]

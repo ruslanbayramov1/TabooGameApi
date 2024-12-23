@@ -16,3 +16,15 @@ public class NotFoundException<TEntity> : Exception, IBaseException where TEntit
         ErrorMessage = message;
     }
 }
+
+public class NotFoundException : Exception, IBaseException
+{
+    public int StatusCode => StatusCodes.Status400BadRequest;
+
+    public string ErrorMessage { get; }
+
+    public NotFoundException(string message)
+    {
+        ErrorMessage = message;
+    }
+}
