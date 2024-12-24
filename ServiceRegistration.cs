@@ -79,12 +79,25 @@ public static class ServiceRegistration
                     await context.Response.WriteAsJsonAsync(new
                     {
                         StatusCode = StatusCodes.Status400BadRequest,
-                        Message = "Something went wrong!"
+                        Message = ex.Message
                     });
                 }
             });
         });
 
         return app;
+    }
+
+    public static IServiceCollection AddCors(this IServiceCollection service)
+    {
+        service.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins", builder =>
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader());
+        });
+
+        return service;
     }
 }

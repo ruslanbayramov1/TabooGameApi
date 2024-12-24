@@ -1,6 +1,5 @@
 
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 using TabooGameApi.DAL;
 using TabooGameApi.Enums;
 
@@ -23,6 +22,8 @@ namespace TabooGameApi
 
             builder.Services.AddCacheServices(builder.Configuration, CacheTypes.Redis);
 
+            builder.Services.AddCors();
+
             // custom extension 
             builder.Services.AddServices();
 
@@ -30,6 +31,8 @@ namespace TabooGameApi
 
             // global error handler 
             app.UseTabooExceptionHandler();
+
+            app.UseCors("AllowAllOrigins");
 
             if (app.Environment.IsDevelopment())
             {

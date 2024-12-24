@@ -48,11 +48,18 @@ public class GameService : IGameService
         var gameOpt = _mapper.Map<GameOptions>(entity);
         await _cacheService.Set(id, gameOpt, entity.TimeSecond);
 
+        int[] ids = await _context.Words
+            .Where(x => x.LanguageCode == entity.LanguageCode && x.LevelId == entity.LevelId)
+            .Select(x => x.Id)
+            .ToArrayAsync();
+
+        int[] selectedIds = Helper.GetRandomUniqueValues(ids, 15);
+
         var wordEntity = await _context.Words
             .Include(x => x.Level)
             .Include(x => x.BannedWords)
-            .Where(x => x.LanguageCode == entity.LanguageCode && x.LevelId == entity.LevelId)
-            .Take(10).ToListAsync();
+            .Where(x => selectedIds.Contains(x.Id))
+            .ToListAsync();
 
         var wordDto = _mapper.Map<List<WordGetDto>>(wordEntity);
         return wordDto;
@@ -84,7 +91,7 @@ public class GameService : IGameService
         if (data.FailCount > 3)
         {
             if (data.SuccessAnswer > 1)
-            { 
+            {
                 data.SuccessAnswer--;
             }
         }
