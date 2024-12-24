@@ -54,7 +54,7 @@ public class GameService : IGameService
             .ToArrayAsync();
 
         int[] selectedIds = Helper.GetRandomUniqueValues(ids, 15);
-
+         
         var wordEntity = await _context.Words
             .Include(x => x.Level)
             .Include(x => x.BannedWords)
