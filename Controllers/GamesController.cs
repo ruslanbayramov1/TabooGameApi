@@ -72,6 +72,14 @@ public class GamesController : ControllerBase
         return Ok(data);
     }
 
+    [HttpPost]
+    [Route("/[action]/{id}")]
+    public async Task<IActionResult> End(string id)
+    {
+        await _service.EndAsync(id);
+        return Ok();
+    }
+
     [HttpPut]
     [Route("{id}")]
     public async Task<IActionResult> Put(string id, GamePutDto dto)

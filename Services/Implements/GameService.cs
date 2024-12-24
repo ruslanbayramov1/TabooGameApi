@@ -4,6 +4,7 @@ using TabooGameApi.DAL;
 using TabooGameApi.DTOs.Games;
 using TabooGameApi.DTOs.Words;
 using TabooGameApi.Entities;
+using TabooGameApi.Enums;
 using TabooGameApi.Exceptions.Commons;
 using TabooGameApi.Exceptions.Games;
 using TabooGameApi.ExternalServices.Abstracts;
@@ -39,8 +40,10 @@ public class GameService : IGameService
 
     public async Task<List<WordGetDto>> StartAsync(string id)
     {
-        var entity = await _context.Games.FirstOrDefaultAsync(x => x.Id.ToString() == id && x.TimeSecond != 0);
+        var entity = await _context.Games.FirstOrDefaultAsync(x => x.Id.ToString() == id && x.Status == nameof(GameStatus.Inactive));
         if (entity == null) throw new NotFoundException<Game>();
+        entity.Status = nameof(GameStatus.Active);
+        await _context.SaveChangesAsync();
 
         var gameOpt = _mapper.Map<GameOptions>(entity);
         await _cacheService.Set(id, gameOpt, entity.TimeSecond);
@@ -57,6 +60,8 @@ public class GameService : IGameService
 
     public async Task<GameOptions> SkipAsync(string id)
     {
+        await _isPlayable(id);
+
         var data = await _getCacheAsync<GameOptions>(id);
         if (data.SkipCount < 3)
         {
@@ -73,6 +78,8 @@ public class GameService : IGameService
 
     public async Task<GameOptions> FailAsync(string id)
     {
+        await _isPlayable(id);
+
         var data = await _getCacheAsync<GameOptions>(id);
         if (data.FailCount > 3)
         {
@@ -90,11 +97,27 @@ public class GameService : IGameService
 
     public async Task<GameOptions> SuccessAsync(string id)
     {
+        await _isPlayable(id);
+
         var data = await _getCacheAsync<GameOptions>(id);
         data.SuccessAnswer++;
         await _setCacheAsync(id, data);
 
         return data;
+    }
+
+    public async Task EndAsync(string id)
+    {
+        await _isPlayable(id);
+
+        var entity = await _getById(id);
+        var data = await _getCacheAsync<GameOptions>(id);
+
+        entity.Status = nameof(GameStatus.Finished);
+        entity.FailCount = data.FailCount;
+        entity.SuccessAnswer = data.SuccessAnswer;
+        entity.SkipCount = data.SkipCount;
+        await _context.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(string id)
@@ -158,5 +181,14 @@ public class GameService : IGameService
     private async Task _setCacheAsync<T>(string key, T gameOpt)
     {
         await _cacheService.Set(key, gameOpt);
+    }
+
+    private async Task _isPlayable(string id)
+    {
+        var entity = await _getById(id);
+        if (entity.Status != nameof(GameStatus.Active))
+        {
+            throw new NotFoundException<Game>();
+        }
     }
 }

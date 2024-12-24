@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TabooGameApi.DAL;
 
@@ -11,9 +12,11 @@ using TabooGameApi.DAL;
 namespace TabooGameApi.Migrations
 {
     [DbContext(typeof(TabooDbContext))]
-    partial class TabooDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241224073451_GameStatusAdd")]
+    partial class GameStatusAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,6 +64,9 @@ namespace TabooGameApi.Migrations
                     b.Property<int>("LevelId")
                         .HasColumnType("int");
 
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
                     b.Property<int>("SkipCount")
                         .HasColumnType("int");
 
@@ -74,6 +80,9 @@ namespace TabooGameApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TimeSecond")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WrongAnswer")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

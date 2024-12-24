@@ -15,4 +15,5 @@ public interface IGameService
     Task<GameOptions> SkipAsync(string id);
     Task<GameOptions> FailAsync(string id);
     Task<GameOptions> SuccessAsync(string id);
+    Task EndAsync(string id);
 }

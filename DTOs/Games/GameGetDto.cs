@@ -9,6 +9,7 @@ public class GameGetDto
     public int Score { get; set; }
     public int SuccessAnswer { get; set; }
     public int WrongAnswer { get; set; }
+    public string Status { get; set; }
     public int LevelId { get; set; }
     public string LanguageCode { get; set; }
 }
