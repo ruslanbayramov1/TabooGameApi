@@ -20,7 +20,7 @@ namespace TabooGameApi
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("Remote"));
             });
 
-            builder.Services.AddCacheServices(builder.Configuration, CacheTypes.Redis);
+            builder.Services.AddCacheServices(builder.Configuration, CacheTypes.Local);
 
             builder.Services.AddCors();
 
