@@ -53,7 +53,7 @@ public class GameService : IGameService
             .Select(x => x.Id)
             .ToArrayAsync();
 
-        int[] selectedIds = Helper.GetRandomUniqueValues(ids, 15);
+        int[] selectedIds = Helper.GetRandomUniqueValues(ids, 20);
          
         var wordEntity = await _context.Words
             .Include(x => x.Level)
@@ -88,14 +88,14 @@ public class GameService : IGameService
         await _isPlayable(id);
 
         var data = await _getCacheAsync<GameOptions>(id);
-        if (data.FailCount > 3)
+        data.FailCount++;
+        if (data.FailCount > 2)
         {
-            if (data.SuccessAnswer > 1)
+            if (data.SuccessAnswer > 0)
             {
                 data.SuccessAnswer--;
             }
         }
-        data.FailCount++;
 
         await _setCacheAsync(id, data);
 
